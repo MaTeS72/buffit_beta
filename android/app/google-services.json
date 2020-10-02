@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "288256751025",
+    "firebase_url": "https://buffitbeta.firebaseio.com",
+    "project_id": "buffitbeta",
+    "storage_bucket": "buffitbeta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288256751025:android:175dff11746ddeb16fb990",
+        "android_client_info": {
+          "package_name": "com.example.buffit_beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288256751025-uq8f3p3rponfrl6qd82kae9huekp9i0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.buffit_beta",
+            "certificate_hash": "1bf52ab00d1b960a88e9fee1659efc448569e56d"
+          }
+        },
+        {
+          "client_id": "288256751025-9abee5qg98q0posuvunpd068588h5g8i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByW9D7dqOcXX4oSo6H81AulnSSDqnaQYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288256751025-9abee5qg98q0posuvunpd068588h5g8i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
