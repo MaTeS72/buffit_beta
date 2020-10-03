@@ -36,7 +36,7 @@ class _BodyState extends State<Body> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    'New Videos',
+                    'Try to change something',
                     style: TextStyle(color: kPrimaryColor, fontSize: 20),
                   )
                 ],
