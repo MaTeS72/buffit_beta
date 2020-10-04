@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/constants.dart';
-import 'package:buffit_beta/myList/my_list.dart';
+
 import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/components/body.dart';
+import 'package:buffit_beta/screens/myList/my_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,12 +44,9 @@ class _HomeState extends State<Home> {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
         title: Text(
           'BUFF IT',
-          style: TextStyle(color: kSecondaryColor),
         ),
-        backgroundColor: Color(0xFF3B3939),
         actions: <Widget>[
           GestureDetector(
             onTap: () {

@@ -1,4 +1,5 @@
 import 'package:buffit_beta/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
@@ -7,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthBloc {
   final authService = AuthService();
   final fb = FacebookLogin();
+  FirebaseFirestore _db = FirebaseFirestore.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final _auth = FirebaseAuth.instance;
 
@@ -21,9 +23,7 @@ class AuthBloc {
     final AuthResult = await authService.signInWithCredentail(credential);
 
     var user = AuthResult.user;
-
-    print("User Name: ${user.displayName}");
-    print("User Email ${user.email}");
+    updateUserData(user);
   }
 
   loginFacebook() async {
@@ -35,7 +35,6 @@ class AuthBloc {
     switch (res.status) {
       case FacebookLoginStatus.Success:
         print('It worked');
-
         //Get Token
         final FacebookAccessToken fbToken = res.accessToken;
 
@@ -47,6 +46,7 @@ class AuthBloc {
         final result = await authService.signInWithCredentail(credential);
 
         print('${result.user.displayName} is now logged in');
+        updateUserData(result.user);
 
         break;
       case FacebookLoginStatus.Cancel:
@@ -56,6 +56,20 @@ class AuthBloc {
         print('There was an error');
         break;
     }
+  }
+
+  void updateUserData(User user) async {
+    DocumentReference ref = _db.collection('users').doc(user.uid);
+
+    return ref.set(
+      {
+        'uid': user.uid,
+        'email': user.email,
+        'photoURL': user.photoURL,
+        'displayName': user.displayName,
+        'lastSeen': DateTime.now()
+      },
+    );
   }
 
   logout() {

@@ -1,5 +1,6 @@
 import 'package:buffit_beta/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 ThemeData theme() {
   return ThemeData(
@@ -10,6 +11,17 @@ ThemeData theme() {
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     brightness: Brightness.dark,
+    appBarTheme: appBarTheme(),
+  );
+}
+
+AppBarTheme appBarTheme() {
+  return AppBarTheme(
+    color: Color(0xFF3B3939),
+    elevation: 0,
+    textTheme: TextTheme(
+      headline6: TextStyle(color: kSecondaryColor, fontSize: 18),
+    ),
   );
 }
 
