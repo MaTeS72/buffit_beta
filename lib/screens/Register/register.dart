@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
-import 'package:buffit_beta/screens/Register/register.dart';
+import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/home.dart';
-import 'package:buffit_beta/size_config.dart';
 import 'package:buffit_beta/validation/signup_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,19 +11,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
+import '../../size_config.dart';
 
-class Login extends StatefulWidget {
+class Register extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterState extends State<Register> {
   StreamSubscription<User> loginStateSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
-
     loginStateSubscription = authBloc.currentUser.listen((fbUser) {
       if (fbUser != null) {
         Navigator.of(context)
@@ -90,7 +89,7 @@ class _LoginState extends State<Login> {
                             SizedBox(
                               width: getProportionateScreenWidth(60),
                             ),
-                            Text('In',
+                            Text('Up',
                                 style: GoogleFonts.sourceSansPro(
                                   textStyle: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -132,30 +131,30 @@ class _LoginState extends State<Login> {
                       SizedBox(height: getProportionateScreenWidth(20)),
                       buildPassFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
+                      buildPassAgainFormField(validationService),
+                      SizedBox(height: getProportionateScreenWidth(20)),
                       Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20)),
-                        height: 55,
+                        height: 65,
                         width: double.infinity,
                         child: FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           onPressed: () {
-                            if (validationService.isValid1 != true) {
-                              print('invalid');
+                            if (validationService.isValid != true) {
                               return null;
                             } else {
                               List credentials = validationService.submitData();
                               var email = credentials[0];
                               var password = credentials[1];
-                              print('login');
-                              authBloc.signInWithEmailAndPassword(
+                              authBloc.registerWithEmailAndPassword(
                                   email, password);
                             }
                           },
                           color: Color(0xFF00B2F5),
                           child: Text(
-                            'Log In',
+                            'Sign Up',
                             style: TextStyle(fontSize: 20),
                           ),
                           textColor: kPrimaryColor,
@@ -167,19 +166,19 @@ class _LoginState extends State<Login> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Dont have account? '),
+                          Text('Already have an account? '),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => Register()));
-                            },
                             child: Text(
-                              'Register',
+                              'Login',
                               style: TextStyle(
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.bold),
                             ),
+                            onTap: () {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => Login()));
+                            },
                           )
                         ],
                       )
@@ -188,33 +187,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
               SizedBox(
-                height: getProportionateScreenWidth(20),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      authBloc.loginFacebook();
-                    },
-                    child: Container(
-                        height: 55,
-                        width: 55,
-                        child: SvgPicture.asset('assets/icons/facebook.svg')),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      authBloc.googleLogin();
-                    },
-                    child: Container(
-                        height: 55,
-                        width: 55,
-                        child: SvgPicture.asset('assets/icons/google.svg')),
-                  )
-                ],
+                height: getProportionateScreenWidth(25),
               ),
             ],
           ),
@@ -225,7 +198,7 @@ class _LoginState extends State<Login> {
 
   TextFormField buildEmailFormField(validationService) {
     return TextFormField(
-      onChanged: (value) {
+      onChanged: (String value) {
         validationService.changeEmail(value);
       },
       decoration: InputDecoration(
@@ -239,13 +212,27 @@ class _LoginState extends State<Login> {
 
   TextFormField buildPassFormField(validationService) {
     return TextFormField(
-      onChanged: (value) {
+      onChanged: (String value) {
         validationService.changePassword(value);
       },
       decoration: InputDecoration(
         labelText: 'Password',
-        errorText: validationService.password.error,
         hintText: 'Enter your password',
+        errorText: validationService.password.error,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+      ),
+    );
+  }
+
+  TextFormField buildPassAgainFormField(validationService) {
+    return TextFormField(
+      onChanged: (String value) {
+        validationService.changePasswordConfirmation(value);
+      },
+      decoration: InputDecoration(
+        labelText: 'Confirm password',
+        hintText: 'Re-enter your password',
+        errorText: validationService.pass_again.error,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );

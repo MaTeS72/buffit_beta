@@ -2,6 +2,7 @@ import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/services/firestore_service.dart';
 import 'package:buffit_beta/size_config.dart';
 import 'package:buffit_beta/theme.dart';
+import 'package:buffit_beta/validation/signup_validation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider(create: (BuildContext context) => _db.getVideos()),
-        Provider(create: (context) => AuthBloc())
+        Provider(create: (context) => AuthBloc()),
+        InheritedProvider(
+          create: (context) => SignupValidation(),
+        )
       ],
       child: MaterialApp(
         title: 'Facebook Login',
