@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/screens/Login/login.dart';
+import 'package:buffit_beta/screens/home/home.dart';
+import 'package:buffit_beta/validation/signup_validation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,18 +13,43 @@ import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../size_config.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
+  StreamSubscription<User> loginStateSubscription;
+
+  @override
+  void initState() {
+    var authBloc = Provider.of<AuthBloc>(context, listen: false);
+    loginStateSubscription = authBloc.currentUser.listen((fbUser) {
+      if (fbUser != null) {
+        Navigator.of(context)
+            .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    loginStateSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
+    final validationService = Provider.of<SignupValidation>(context);
+
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'BUFF IT',
-          ),
-        ),
+            title: SvgPicture.asset('assets/images/buffit.svg',
+                width: getProportionateScreenWidth(110))),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -97,11 +127,11 @@ class Register extends StatelessWidget {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(),
+                      buildEmailFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(),
+                      buildPassFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildEmailFormField(),
+                      buildPassAgainFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
                       Container(
                         decoration: BoxDecoration(
@@ -111,10 +141,20 @@ class Register extends StatelessWidget {
                         child: FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {},
+                          onPressed: () {
+                            if (validationService.isValid != true) {
+                              return null;
+                            } else {
+                              List credentials = validationService.submitData();
+                              var email = credentials[0];
+                              var password = credentials[1];
+                              authBloc.registerWithEmailAndPassword(
+                                  email, password);
+                            }
+                          },
                           color: Color(0xFF00B2F5),
                           child: Text(
-                            'Log In',
+                            'Sign Up',
                             style: TextStyle(fontSize: 20),
                           ),
                           textColor: kPrimaryColor,
@@ -156,21 +196,43 @@ class Register extends StatelessWidget {
     );
   }
 
-  TextFormField buildEmailFormField() {
+  TextFormField buildEmailFormField(validationService) {
     return TextFormField(
+      onChanged: (String value) {
+        validationService.changeEmail(value);
+      },
       decoration: InputDecoration(
         labelText: 'Email',
         hintText: 'Enter your email',
+        errorText: validationService.email.error,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
   }
 
-  TextFormField buildPassFormField() {
+  TextFormField buildPassFormField(validationService) {
     return TextFormField(
+      onChanged: (String value) {
+        validationService.changePassword(value);
+      },
       decoration: InputDecoration(
         labelText: 'Password',
         hintText: 'Enter your password',
+        errorText: validationService.password.error,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+      ),
+    );
+  }
+
+  TextFormField buildPassAgainFormField(validationService) {
+    return TextFormField(
+      onChanged: (String value) {
+        validationService.changePasswordConfirmation(value);
+      },
+      decoration: InputDecoration(
+        labelText: 'Confirm password',
+        hintText: 'Re-enter your password',
+        errorText: validationService.pass_again.error,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );

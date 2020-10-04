@@ -4,6 +4,7 @@ import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/screens/Register/register.dart';
 import 'package:buffit_beta/screens/home/home.dart';
 import 'package:buffit_beta/size_config.dart';
+import 'package:buffit_beta/validation/signup_validation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,6 +24,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
+
     loginStateSubscription = authBloc.currentUser.listen((fbUser) {
       if (fbUser != null) {
         Navigator.of(context)
@@ -41,14 +43,14 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
+    final validationService = Provider.of<SignupValidation>(context);
+
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'BUFF IT',
-          ),
-        ),
+            title: SvgPicture.asset('assets/images/buffit.svg',
+                width: getProportionateScreenWidth(110))),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -126,9 +128,9 @@ class _LoginState extends State<Login> {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(),
+                      buildEmailFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(),
+                      buildPassFormField(validationService),
                       SizedBox(height: getProportionateScreenWidth(20)),
                       Container(
                         decoration: BoxDecoration(
@@ -138,7 +140,19 @@ class _LoginState extends State<Login> {
                         child: FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {},
+                          onPressed: () {
+                            if (validationService.isValid1 != true) {
+                              print('invalid');
+                              return null;
+                            } else {
+                              List credentials = validationService.submitData();
+                              var email = credentials[0];
+                              var password = credentials[1];
+                              print('login');
+                              authBloc.signInWithEmailAndPassword(
+                                  email, password);
+                            }
+                          },
                           color: Color(0xFF00B2F5),
                           child: Text(
                             'Log In',
@@ -209,20 +223,28 @@ class _LoginState extends State<Login> {
     );
   }
 
-  TextFormField buildEmailFormField() {
+  TextFormField buildEmailFormField(validationService) {
     return TextFormField(
+      onChanged: (value) {
+        validationService.changeEmail(value);
+      },
       decoration: InputDecoration(
         labelText: 'Email',
         hintText: 'Enter your email',
+        errorText: validationService.email.error,
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
   }
 
-  TextFormField buildPassFormField() {
+  TextFormField buildPassFormField(validationService) {
     return TextFormField(
+      onChanged: (value) {
+        validationService.changePassword(value);
+      },
       decoration: InputDecoration(
         labelText: 'Password',
+        errorText: validationService.password.error,
         hintText: 'Enter your password',
         floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),

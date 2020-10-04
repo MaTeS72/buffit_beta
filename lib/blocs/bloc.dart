@@ -14,6 +14,7 @@ class AuthBloc {
 
   Stream<User> get currentUser => authService.currentUser;
 
+// ------ Google Login ------
   googleLogin() async {
     GoogleSignInAccount googleUser = await googleSignIn.signIn();
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -26,6 +27,22 @@ class AuthBloc {
     updateUserData(user);
   }
 
+// ------ Register with credentials ------
+  Future signInWithEmailAndPassword(String email, String password) async {
+    try {
+      final AuthResult = await authService.signIn(email, password);
+    } catch (error) {
+      print(error.toString());
+    }
+  }
+
+  Future registerWithEmailAndPassword(String email, String password) async {
+    final AuthResult = await authService.registerUser(email, password);
+    var user = AuthResult.user;
+    updateUserData(user);
+  }
+
+// ------ Facebook Login ------
   loginFacebook() async {
     final res = await fb.logIn(permissions: [
       FacebookPermission.publicProfile,
@@ -57,6 +74,8 @@ class AuthBloc {
         break;
     }
   }
+
+// ------ Add user to Firestore ------
 
   void updateUserData(User user) async {
     DocumentReference ref = _db.collection('users').doc(user.uid);

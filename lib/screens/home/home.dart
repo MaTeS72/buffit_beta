@@ -8,6 +8,7 @@ import 'package:buffit_beta/screens/home/components/body.dart';
 import 'package:buffit_beta/screens/myList/my_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../size_config.dart';
@@ -44,9 +45,8 @@ class _HomeState extends State<Home> {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'BUFF IT',
-        ),
+        title: SvgPicture.asset('assets/images/buffit.svg',
+            width: getProportionateScreenWidth(110)),
         actions: <Widget>[
           GestureDetector(
             onTap: () {
@@ -56,11 +56,16 @@ class _HomeState extends State<Home> {
                 stream: authBloc.currentUser,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return CircularProgressIndicator();
-                  return CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        snapshot.data.photoURL + '?width=100&height100'),
-                    radius: 30.0,
-                  );
+                  if (snapshot.data.photoURL == null) {
+                    return FlatButton(
+                        child: Text(snapshot.data.email.substring(0, 2)));
+                  } else {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          snapshot.data.photoURL + '?width=100&height100'),
+                      radius: 30.0,
+                    );
+                  }
                 }),
           )
         ],
