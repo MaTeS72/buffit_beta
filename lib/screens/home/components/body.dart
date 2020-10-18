@@ -21,7 +21,6 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
-    var videos = Provider.of<List<Video>>(context)?.toList();
     FirestoreService _db = FirestoreService();
 
     return SingleChildScrollView(
@@ -36,22 +35,12 @@ class _BodyState extends State<Body> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    'Try to change something',
+                    '',
                     style: TextStyle(color: kPrimaryColor, fontSize: 20),
                   )
                 ],
               ),
             ),
-            Flexible(
-                fit: FlexFit.loose,
-                child: ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: videos.length,
-                    itemBuilder: (context, index) => VideoCard(
-                          itemIndex: index,
-                          video: videos[index],
-                        )))
           ],
         ),
       ),

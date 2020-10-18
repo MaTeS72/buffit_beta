@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/constants.dart';
+import 'package:buffit_beta/models/application_user.dart';
 
 import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/components/body.dart';
@@ -14,20 +15,20 @@ import 'package:provider/provider.dart';
 import '../../size_config.dart';
 
 class Home extends StatefulWidget {
+  static String routeName = "/home";
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  StreamSubscription<User> homeStateSubscription;
+  StreamSubscription<ApplicationUser> homeStateSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
-    homeStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser == null) {
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+    homeStateSubscription = authBloc.user.listen((user) {
+      if (user == null) {
+        Navigator.pushReplacementNamed(context, Login.routeName);
       }
     });
     super.initState();
@@ -55,7 +56,8 @@ class _HomeState extends State<Home> {
             child: StreamBuilder<User>(
                 stream: authBloc.currentUser,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  if (!snapshot.hasData || snapshot.data == null)
+                    return CircularProgressIndicator();
                   if (snapshot.data.photoURL == null) {
                     return FlatButton(
                         child: Text(snapshot.data.email.substring(0, 2)));
@@ -93,8 +95,7 @@ class _HomeState extends State<Home> {
                   color: Color(0xFF7D7A7A),
                   iconSize: 35,
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => MyList()));
+                    Navigator.pushReplacementNamed(context, MyList.routeName);
                   })
             ],
           ),
