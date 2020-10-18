@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
+import 'package:buffit_beta/models/application_user.dart';
 import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/home.dart';
 import 'package:buffit_beta/validation/signup_validation.dart';
@@ -14,20 +15,20 @@ import '../../constants.dart';
 import '../../size_config.dart';
 
 class Register extends StatefulWidget {
+  static String routeName = "/register";
   @override
   _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
-  StreamSubscription<User> loginStateSubscription;
+  StreamSubscription<ApplicationUser> loginStateSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
-    loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser != null) {
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+    loginStateSubscription = authBloc.user.listen((user) {
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, Home.routeName);
       }
     });
     super.initState();

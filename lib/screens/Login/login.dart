@@ -1,34 +1,33 @@
 import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
+import 'package:buffit_beta/models/application_user.dart';
 import 'package:buffit_beta/screens/Register/register.dart';
 import 'package:buffit_beta/screens/home/home.dart';
 import 'package:buffit_beta/size_config.dart';
 import 'package:buffit_beta/validation/signup_validation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 
 class Login extends StatefulWidget {
+  static String routeName = "/login";
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  StreamSubscription<User> loginStateSubscription;
+  StreamSubscription<ApplicationUser> _userSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
 
-    loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser != null) {
-        Navigator.of(context)
-            .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+    _userSubscription = authBloc.user.listen((user) {
+      if (user != null) {
+        Navigator.pushReplacementNamed(context, Home.routeName);
       }
     });
     super.initState();
@@ -36,7 +35,7 @@ class _LoginState extends State<Login> {
 
   @override
   void dispose() {
-    loginStateSubscription.cancel();
+    _userSubscription.cancel();
     super.dispose();
   }
 
@@ -73,12 +72,7 @@ class _LoginState extends State<Login> {
                       children: <Widget>[
                         Text(
                           'Sign',
-                          style: GoogleFonts.sourceSansPro(
-                            textStyle: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: getProportionateScreenWidth(50),
-                                color: kPrimaryColor),
-                          ),
+                          style: headingStyle1,
                         ),
                         Container(
                           height: 5,
@@ -90,13 +84,10 @@ class _LoginState extends State<Login> {
                             SizedBox(
                               width: getProportionateScreenWidth(60),
                             ),
-                            Text('In',
-                                style: GoogleFonts.sourceSansPro(
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: getProportionateScreenWidth(50),
-                                      color: kPrimaryColor),
-                                )),
+                            Text(
+                              'In',
+                              style: headingStyle1,
+                            ),
                             Text(
                               '.',
                               style: TextStyle(
@@ -170,9 +161,8 @@ class _LoginState extends State<Login> {
                           Text('Dont have account? '),
                           GestureDetector(
                             onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => Register()));
+                              Navigator.pushReplacementNamed(
+                                  context, Register.routeName);
                             },
                             child: Text(
                               'Register',
