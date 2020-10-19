@@ -29,9 +29,7 @@ class _BodyState extends State<Body> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Header(
-              title: 'Learn Fast',
-            ),
+            Header(),
             Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
               child: Row(
