@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/models/Video.dart';
-import 'package:buffit_beta/screens/home/components/header.dart';
+import 'package:buffit_beta/widgets/header.dart';
 import 'package:buffit_beta/screens/home/components/video_card.dart';
 import 'package:buffit_beta/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +29,9 @@ class _BodyState extends State<Body> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Header(),
+            Header(
+              title: 'Learn Fast',
+            ),
             Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
               child: Row(
