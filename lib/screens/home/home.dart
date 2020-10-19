@@ -6,7 +6,10 @@ import 'package:buffit_beta/models/application_user.dart';
 
 import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/components/body.dart';
-import 'package:buffit_beta/screens/myList/my_list.dart';
+import 'package:buffit_beta/screens/videos/videos.dart';
+import 'package:buffit_beta/widgets/bottomMenu.dart';
+import 'package:buffit_beta/widgets/homeButton.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -72,35 +75,9 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: kSecondaryColorShade,
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(30)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              IconButton(
-                  icon: Icon(Icons.code),
-                  color: Color(0xFF7D7A7A),
-                  iconSize: 35,
-                  onPressed: () {}),
-              IconButton(
-                  icon: Icon(Icons.home),
-                  color: kPrimaryColor,
-                  iconSize: 35,
-                  onPressed: () {}),
-              IconButton(
-                  icon: Icon(Icons.movie_creation),
-                  color: Color(0xFF7D7A7A),
-                  iconSize: 35,
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, MyList.routeName);
-                  })
-            ],
-          ),
-        ),
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: HomeButton(),
+      bottomNavigationBar: BottomMenu(),
       body: Body(),
     );
   }
