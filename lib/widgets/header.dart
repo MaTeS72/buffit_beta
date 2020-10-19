@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../size_config.dart';
+import '../size_config.dart';
 
 class Header extends StatelessWidget {
   @override
