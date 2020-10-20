@@ -1,4 +1,6 @@
+import 'package:buffit_beta/app.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 class AuthService {
   final _auth = FirebaseAuth.instance;
@@ -8,12 +10,11 @@ class AuthService {
   Future<void> logout() => _auth.signOut();
   Future<UserCredential> registerUser(email, password) =>
       _auth.createUserWithEmailAndPassword(email: email, password: password);
-  Future<UserCredential> signIn(email, password) {
+  signIn(email, password) {
     try {
       return _auth.signInWithEmailAndPassword(email: email, password: password);
-    } catch (error) {
-      print(error.toString());
-      return null;
+    } on PlatformException catch (error) {
+      return error;
     }
   }
 }

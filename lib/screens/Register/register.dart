@@ -128,38 +128,71 @@ class _RegisterState extends State<Register> {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.email,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changeEmail,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                hintText: 'Enter your email',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.password,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changePassword,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                hintText: 'Enter your password',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassAgainFormField(validationService),
+                      // TextFormField(
+                      //   onChanged: (String value) {
+                      //     validationService.changePasswordConfirmation(value);
+                      //   },
+                      //   decoration: InputDecoration(
+                      //     labelText: 'Confirm password',
+                      //     hintText: 'Re-enter your password',
+                      //     errorText: validationService.pass_again.error,
+                      //     floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      //   ),
+                      // ),
                       SizedBox(height: getProportionateScreenWidth(20)),
                       Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20)),
                         height: 65,
                         width: double.infinity,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {
-                            if (validationService.isValid != true) {
-                              return null;
-                            } else {
-                              List credentials = validationService.submitData();
-                              var email = credentials[0];
-                              var password = credentials[1];
-                              authBloc.registerWithEmailAndPassword(
-                                  email, password);
-                            }
-                          },
-                          color: Color(0xFF00B2F5),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          textColor: kPrimaryColor,
-                        ),
+                        child: StreamBuilder<Object>(
+                            stream: authBloc.isValid,
+                            builder: (context, snapshot) {
+                              return FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                onPressed: () {
+                                  authBloc.registerWithEmailAndPassword();
+                                },
+                                color: Color(0xFF00B2F5),
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                textColor: kPrimaryColor,
+                              );
+                            }),
                       ),
                       SizedBox(
                         height: 10,
@@ -193,48 +226,6 @@ class _RegisterState extends State<Register> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  TextFormField buildEmailFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changeEmail(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Email',
-        hintText: 'Enter your email',
-        errorText: validationService.email.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changePassword(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Password',
-        hintText: 'Enter your password',
-        errorText: validationService.password.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassAgainFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changePasswordConfirmation(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Confirm password',
-        hintText: 'Re-enter your password',
-        errorText: validationService.pass_again.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
   }

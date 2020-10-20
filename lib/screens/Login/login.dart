@@ -20,16 +20,45 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   StreamSubscription<ApplicationUser> _userSubscription;
+  StreamSubscription _errorMessageSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
 
     _userSubscription = authBloc.user.listen((user) {
+      print('user je' + '$user');
       if (user != null) {
         Navigator.pushReplacementNamed(context, Home.routeName);
       }
     });
+
+    _errorMessageSubscription = authBloc.errorMessage.listen((errorMessage) {
+      if (errorMessage != '') {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  'Error',
+                ),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[Text(errorMessage)],
+                  ),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                ],
+              );
+            }).then((value) => authBloc.clearErrorMessage());
+      }
+    });
+
     super.initState();
   }
 
@@ -42,7 +71,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
-    final validationService = Provider.of<SignupValidation>(context);
 
     SizeConfig().init(context);
     return SafeArea(
@@ -119,39 +147,54 @@ class _LoginState extends State<Login> {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.email,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changeEmail,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                hintText: 'Enter your email',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.password,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              obscureText: true,
+                              onChanged: authBloc.changePassword,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                errorText: snapshot.error,
+                                hintText: 'Enter your password',
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        height: 55,
-                        width: double.infinity,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {
-                            if (validationService.isValid1 != true) {
-                              print('invalid');
-                              return null;
-                            } else {
-                              List credentials = validationService.submitData();
-                              var email = credentials[0];
-                              var password = credentials[1];
-                              print('login');
-                              authBloc.signInWithEmailAndPassword(
-                                  email, password);
-                            }
-                          },
-                          color: Color(0xFF00B2F5),
-                          child: Text(
-                            'Log In',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          textColor: kPrimaryColor,
-                        ),
-                      ),
+                      StreamBuilder<bool>(
+                          stream: authBloc.isValid,
+                          builder: (context, snapshot) {
+                            return RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              color: Color(0xFF00B2F5),
+                              onPressed: () {
+                                authBloc.loginEmail();
+                              },
+                              child: Text(
+                                'Log In',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              textColor: kPrimaryColor,
+                            );
+                          }),
                       SizedBox(
                         height: 10,
                       ),
@@ -212,32 +255,32 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  TextFormField buildEmailFormField(validationService) {
-    return TextFormField(
-      onChanged: (value) {
-        validationService.changeEmail(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Email',
-        hintText: 'Enter your email',
-        errorText: validationService.email.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassFormField(validationService) {
-    return TextFormField(
-      onChanged: (value) {
-        validationService.changePassword(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Password',
-        errorText: validationService.password.error,
-        hintText: 'Enter your password',
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
 }
+// TextFormField buildEmailFormField(validationService) {
+//   return TextFormField(
+//     onChanged: (value) {
+//       validationService.changeEmail(value);
+//     },
+//     decoration: InputDecoration(
+//       labelText: 'Email',
+//       hintText: 'Enter your email',
+//       errorText: validationService.email.error,
+//       floatingLabelBehavior: FloatingLabelBehavior.auto,
+//     ),
+//   );
+// }
+
+//   TextFormField buildPassFormField(validationService) {
+//     return TextFormField(
+//       onChanged: (value) {
+//         validationService.changePassword(value);
+//       },
+//       decoration: InputDecoration(
+//         labelText: 'Password',
+//         errorText: validationService.password.error,
+//         hintText: 'Enter your password',
+//         floatingLabelBehavior: FloatingLabelBehavior.auto,
+//       ),
+//     );
+//   }
+// }
