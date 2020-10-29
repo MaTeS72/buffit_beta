@@ -1,3 +1,4 @@
+import 'package:buffit_beta/blocs/courseBloc.dart';
 import 'package:buffit_beta/routes.dart';
 import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/home.dart';
@@ -20,6 +21,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
       Provider(create: (context) => AuthBloc()),
+      Provider(create: (context) => CourseBloc()),
       FutureProvider(create: (context) => authBloc.isLoggedIn()),
       InheritedProvider(
         create: (context) => SignupValidation(),
@@ -42,7 +44,9 @@ class PlatformApp extends StatelessWidget {
     return MaterialApp(
         home: (isLoggedIn == null)
             ? Login()
-            : (isLoggedIn == true) ? Home() : Login(),
+            : (isLoggedIn == true)
+                ? Home()
+                : Login(),
         debugShowCheckedModeBanner: false,
         initialRoute: Login.routeName,
         routes: routes,

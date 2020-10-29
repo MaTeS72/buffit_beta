@@ -6,7 +6,11 @@ class HomeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushReplacementNamed(context, Home.routeName);
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+              pageBuilder: (context, animation1, animation2) => Home()),
+        );
       },
       child: Icon(
         Icons.home,

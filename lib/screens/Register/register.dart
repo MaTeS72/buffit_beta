@@ -128,39 +128,97 @@ class _RegisterState extends State<Register> {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.email,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changeEmail,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                hintText: 'Enter your email',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.password,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changePassword,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                hintText: 'Enter your password',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassAgainFormField(validationService),
-                      SizedBox(height: getProportionateScreenWidth(20)),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        height: 65,
-                        width: double.infinity,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {
-                            if (validationService.isValid != true) {
-                              return null;
+                      StreamBuilder<Object>(
+                          stream: authBloc.passwordAgain,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changePasswordAgain,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Confirm password',
+                                hintText: 'Re-enter your password',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
+                      SizedBox(height: getProportionateScreenWidth(5)),
+                      StreamBuilder<String>(
+                          stream: authBloc.errorMessage,
+                          builder: (context, snapshot) {
+                            if (snapshot.data != '' && snapshot.data != null) {
+                              return Text(snapshot.data,
+                                  style: TextStyle(color: Colors.red));
                             } else {
-                              List credentials = validationService.submitData();
-                              var email = credentials[0];
-                              var password = credentials[1];
-                              authBloc.registerWithEmailAndPassword(
-                                  email, password);
+                              return Text('');
                             }
-                          },
-                          color: Color(0xFF00B2F5),
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          textColor: kPrimaryColor,
-                        ),
-                      ),
+                          }),
+                      SizedBox(height: getProportionateScreenWidth(10)),
+                      StreamBuilder<Object>(
+                          stream: authBloc.isMatchingandValid,
+                          builder: (context, snapshot) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: 65,
+                              width: double.infinity,
+                              child: StreamBuilder<bool>(
+                                  stream: authBloc.isMatchingandValid,
+                                  builder: (context, snapshot) {
+                                    return FlatButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      onPressed: () {
+                                        if (snapshot.data == true) {
+                                          authBloc
+                                              .registerWithEmailAndPassword();
+                                        }
+                                      },
+                                      color: (snapshot.data == true)
+                                          ? Color(0xFF00B2F5)
+                                          : Color(0xFF00B2F5).withOpacity(0.3),
+                                      child: Text(
+                                        'Sign Up',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      textColor: kPrimaryColor,
+                                    );
+                                  }),
+                            );
+                          }),
                       SizedBox(
                         height: 10,
                       ),
@@ -193,48 +251,6 @@ class _RegisterState extends State<Register> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  TextFormField buildEmailFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changeEmail(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Email',
-        hintText: 'Enter your email',
-        errorText: validationService.email.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changePassword(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Password',
-        hintText: 'Enter your password',
-        errorText: validationService.password.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassAgainFormField(validationService) {
-    return TextFormField(
-      onChanged: (String value) {
-        validationService.changePasswordConfirmation(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Confirm password',
-        hintText: 'Re-enter your password',
-        errorText: validationService.pass_again.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
       ),
     );
   }

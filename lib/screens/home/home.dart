@@ -26,6 +26,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   StreamSubscription<ApplicationUser> homeStateSubscription;
 
+  //TODO: zmenšit avatar, najít pushnamed
+
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
@@ -63,6 +65,7 @@ class _HomeState extends State<Home> {
                     return CircularProgressIndicator();
                   if (snapshot.data.photoURL == null) {
                     return FlatButton(
+                        onPressed: () => authBloc.logout(),
                         child: Text(snapshot.data.email.substring(0, 2)));
                   } else {
                     return CircleAvatar(

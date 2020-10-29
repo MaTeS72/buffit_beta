@@ -4,8 +4,13 @@ import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/models/application_user.dart';
 import 'package:buffit_beta/screens/Register/register.dart';
 import 'package:buffit_beta/screens/home/home.dart';
+import 'package:buffit_beta/screens/reset_password/reset_password.dart';
 import 'package:buffit_beta/size_config.dart';
+import 'package:buffit_beta/styles/colors.dart';
+import 'package:buffit_beta/styles/text.dart';
 import 'package:buffit_beta/validation/signup_validation.dart';
+import 'package:buffit_beta/widgets/fullwidthbutton.dart';
+import 'package:buffit_beta/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -18,18 +23,22 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
+//TODO: přidání resetu hesla
 class _LoginState extends State<Login> {
   StreamSubscription<ApplicationUser> _userSubscription;
+  //StreamSubscription _errorMessageSubscription;
 
   @override
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
 
     _userSubscription = authBloc.user.listen((user) {
+      print('user je' + '$user');
       if (user != null) {
         Navigator.pushReplacementNamed(context, Home.routeName);
       }
     });
+
     super.initState();
   }
 
@@ -42,7 +51,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     var authBloc = Provider.of<AuthBloc>(context);
-    final validationService = Provider.of<SignupValidation>(context);
 
     SizeConfig().init(context);
     return SafeArea(
@@ -110,8 +118,17 @@ class _LoginState extends State<Login> {
                       )),
                 ],
               ),
+              StreamBuilder<String>(
+                  stream: authBloc.errorMessage,
+                  builder: (context, snapshot) {
+                    if (snapshot.data != '' && snapshot.data != null) {
+                      return Text(snapshot.data,
+                          style: TextStyle(color: Colors.red));
+                    }
+                    return Text('');
+                  }),
               SizedBox(
-                height: getProportionateScreenWidth(20),
+                height: getProportionateScreenWidth(10),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -119,39 +136,79 @@ class _LoginState extends State<Login> {
                 child: Form(
                   child: Column(
                     children: [
-                      buildEmailFormField(validationService),
+                      StreamBuilder<String>(
+                          stream: authBloc.email,
+                          builder: (context, snapshot) {
+                            return AppTextField(
+                              initialText: 'Email',
+                              hintText: 'Enter your email',
+                              onChanged: authBloc.changeEmail,
+                              errorText: snapshot.error,
+                              obscureText: false,
+                              materialIcon: Icon(
+                                Icons.email_outlined,
+                                color: AppColors.lightgreycolor,
+                              ),
+                            );
+                          }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      buildPassFormField(validationService),
-                      SizedBox(height: getProportionateScreenWidth(20)),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        height: 55,
-                        width: double.infinity,
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          onPressed: () {
-                            if (validationService.isValid1 != true) {
-                              print('invalid');
-                              return null;
-                            } else {
-                              List credentials = validationService.submitData();
-                              var email = credentials[0];
-                              var password = credentials[1];
-                              print('login');
-                              authBloc.signInWithEmailAndPassword(
-                                  email, password);
-                            }
-                          },
-                          color: Color(0xFF00B2F5),
-                          child: Text(
-                            'Log In',
-                            style: TextStyle(fontSize: 20),
+                      StreamBuilder<String>(
+                          stream: authBloc.password,
+                          builder: (context, snapshot) {
+                            return AppTextField(
+                              initialText: 'Password',
+                              hintText: 'Enter your password',
+                              onChanged: authBloc.changePassword,
+                              errorText: snapshot.error,
+                              obscureText: true,
+                              materialIcon: Icon(
+                                Icons.lock_outline,
+                                color: AppColors.lightgreycolor,
+                              ),
+                            );
+                          }),
+                      SizedBox(height: getProportionateScreenWidth(5)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, ResetPassword.routeName);
+                            },
+                            child: Text(
+                              'Forgot password?',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            ),
                           ),
-                          textColor: kPrimaryColor,
-                        ),
+                        ],
                       ),
+                      SizedBox(height: getProportionateScreenWidth(10)),
+                      StreamBuilder<bool>(
+                          stream: authBloc.isValid,
+                          builder: (context, snapshot) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20)),
+                              width: double.infinity,
+                              height: getProportionateScreenWidth(60),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                color: Color(0xFF00B2F5),
+                                onPressed: () {
+                                  authBloc.loginEmail();
+                                },
+                                child: Text(
+                                  'Log In',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                textColor: kPrimaryColor,
+                              ),
+                            );
+                          }),
                       SizedBox(
                         height: 10,
                       ),
@@ -206,38 +263,45 @@ class _LoginState extends State<Login> {
                   )
                 ],
               ),
+              // SizedBox(
+              //   height: getProportionateScreenWidth(10),
+              // ),
+              // Text(
+              //   'Terms of Use.',
+              //   textAlign: TextAlign.center,
+              // )
             ],
           ),
         ),
       ),
     );
   }
-
-  TextFormField buildEmailFormField(validationService) {
-    return TextFormField(
-      onChanged: (value) {
-        validationService.changeEmail(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Email',
-        hintText: 'Enter your email',
-        errorText: validationService.email.error,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
-
-  TextFormField buildPassFormField(validationService) {
-    return TextFormField(
-      onChanged: (value) {
-        validationService.changePassword(value);
-      },
-      decoration: InputDecoration(
-        labelText: 'Password',
-        errorText: validationService.password.error,
-        hintText: 'Enter your password',
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-      ),
-    );
-  }
 }
+// TextFormField buildEmailFormField(validationService) {
+//   return TextFormField(
+//     onChanged: (value) {
+//       validationService.changeEmail(value);
+//     },
+//     decoration: InputDecoration(
+//       labelText: 'Email',
+//       hintText: 'Enter your email',
+//       errorText: validationService.email.error,
+//       floatingLabelBehavior: FloatingLabelBehavior.auto,
+//     ),
+//   );
+// }
+
+//   TextFormField buildPassFormField(validationService) {
+//     return TextFormField(
+//       onChanged: (value) {
+//         validationService.changePassword(value);
+//       },
+//       decoration: InputDecoration(
+//         labelText: 'Password',
+//         errorText: validationService.password.error,
+//         hintText: 'Enter your password',
+//         floatingLabelBehavior: FloatingLabelBehavior.auto,
+//       ),
+//     );
+//   }
+// }
