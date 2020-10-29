@@ -1,15 +1,14 @@
-import 'dart:io';
-import 'package:buffit_beta/models/Video.dart';
 import 'package:buffit_beta/models/application_user.dart';
+import 'package:buffit_beta/models/course.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
   FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Stream<List<Video>> getVideos() {
-    return _db.collection('videos').snapshots().map((snapshot) => snapshot.docs
-        .map((document) => Video.fromJson(document.data()))
-        .toList());
+  Stream<List<Course>> fetchCourses() {
+    return _db.collection('courses').snapshots().map((query) => query.docs).map(
+        (snapshot) =>
+            snapshot.map((doc) => Course.fromFirestore(doc.data())).toList());
   }
 
   Future<ApplicationUser> fetchUser(String userId) {

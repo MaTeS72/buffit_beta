@@ -16,7 +16,7 @@ class AuthBloc {
   final _password = BehaviorSubject<String>();
   final _passwordAgain = BehaviorSubject<String>();
   final _errorMessage = BehaviorSubject<String>();
-
+  final _infoStream = BehaviorSubject<String>();
   final authService = AuthService();
   final fb = FacebookLogin();
   final _user = BehaviorSubject<ApplicationUser>();
@@ -30,13 +30,24 @@ class AuthBloc {
   Stream<String> get email => _email.stream.transform(validateEmail);
   Stream<String> get password => _password.stream.transform(validatePassword);
   Stream<String> get passwordAgain =>
-      _password.stream.transform(validatePassword);
+      _passwordAgain.stream.transform(validatePassword).doOnData((String c) {
+        // If the password is accepted (after validation of the rules)
+        // we need to ensure both password and retyped password match
+        if (0 != _password.value.compareTo(c)) {
+          // If they do not match, add an error
+          _passwordAgain.sink.addError('Password doesn´t match');
+        }
+      });
+
+  Stream<bool> get isMatchingandValid => CombineLatestStream.combine3(
+      password, passwordAgain, email, (password, passwordAgain, email) => true);
+
   Stream<String> get errorMessage => _errorMessage.stream;
   Stream<bool> get isValid =>
       CombineLatestStream.combine2(email, password, (email, password) => true);
   Stream<User> get currentUser => authService.currentUser;
   Stream<ApplicationUser> get user => _user.stream;
-
+  Stream<String> get infoStream => _infoStream.stream;
 //Set
 
   Function(String) get changeEmail => _email.sink.add;
@@ -70,6 +81,7 @@ class AuthBloc {
     _user.close();
     _email.close();
     _password.close();
+    _infoStream.close();
     _passwordAgain.close();
     _errorMessage.close();
   }
@@ -77,13 +89,26 @@ class AuthBloc {
   // ------ Register with credentials ------
   loginEmail() async {
     try {
-      var authResult = await _auth.signInWithEmailAndPassword(
-          email: _email.value.trim(), password: _password.value.trim());
+      var authResult =
+          await authService.signIn(_email.value.trim(), _password.value.trim());
       var user = await _firestoreService.fetchUser(authResult.user.uid);
       _user.sink.add(user);
+      clearErrorMessage();
     } on PlatformException catch (error) {
       print(error.message);
-      _errorMessage.sink.add(error.message);
+      _errorMessage.sink.add('Wrong email or password. Try again');
+    } catch (error) {
+      print(error.message);
+      _errorMessage.sink.add('Wrong email or password. Try again');
+    }
+  }
+
+  Future<String> resetPassword() async {
+    try {
+      await _auth.sendPasswordResetEmail(email: _email.value.trim());
+      return 'Email sent!';
+    } catch (e) {
+      return 'Invalid email address';
     }
   }
 
@@ -98,9 +123,14 @@ class AuthBloc {
         displayName: AuthResult.user.displayName,
       );
       _user.sink.add(user);
+      clearErrorMessage();
       updateUserData(user);
     } on PlatformException catch (error) {
-      _errorMessage.sink.add(error.message);
+      print(error.message);
+      _errorMessage.sink.add('The email address is already in use.');
+    } catch (error) {
+      print(error.message);
+      _errorMessage.sink.add('The email address is already in use.');
     }
   }
 
@@ -120,6 +150,7 @@ class AuthBloc {
       displayName: AuthResult.user.displayName,
     );
     _user.sink.add(user);
+    clearErrorMessage();
     updateUserData(user);
   }
 
@@ -151,6 +182,7 @@ class AuthBloc {
           displayName: result.user.displayName,
         );
         _user.sink.add(user);
+        clearErrorMessage();
         updateUserData(user);
 
         break;

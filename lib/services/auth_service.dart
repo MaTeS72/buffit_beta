@@ -13,8 +13,9 @@ class AuthService {
   signIn(email, password) {
     try {
       return _auth.signInWithEmailAndPassword(email: email, password: password);
-    } on PlatformException catch (error) {
-      return error;
+    } catch (e) {
+      print(e.toString());
+      print(e.message);
     }
   }
 }

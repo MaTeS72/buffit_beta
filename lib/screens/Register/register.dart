@@ -159,41 +159,66 @@ class _RegisterState extends State<Register> {
                             );
                           }),
                       SizedBox(height: getProportionateScreenWidth(20)),
-                      // TextFormField(
-                      //   onChanged: (String value) {
-                      //     validationService.changePasswordConfirmation(value);
-                      //   },
-                      //   decoration: InputDecoration(
-                      //     labelText: 'Confirm password',
-                      //     hintText: 'Re-enter your password',
-                      //     errorText: validationService.pass_again.error,
-                      //     floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      //   ),
-                      // ),
-                      SizedBox(height: getProportionateScreenWidth(20)),
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20)),
-                        height: 65,
-                        width: double.infinity,
-                        child: StreamBuilder<Object>(
-                            stream: authBloc.isValid,
-                            builder: (context, snapshot) {
-                              return FlatButton(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                onPressed: () {
-                                  authBloc.registerWithEmailAndPassword();
-                                },
-                                color: Color(0xFF00B2F5),
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                textColor: kPrimaryColor,
-                              );
-                            }),
-                      ),
+                      StreamBuilder<Object>(
+                          stream: authBloc.passwordAgain,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              onChanged: authBloc.changePasswordAgain,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                labelText: 'Confirm password',
+                                hintText: 'Re-enter your password',
+                                errorText: snapshot.error,
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.auto,
+                              ),
+                            );
+                          }),
+                      SizedBox(height: getProportionateScreenWidth(5)),
+                      StreamBuilder<String>(
+                          stream: authBloc.errorMessage,
+                          builder: (context, snapshot) {
+                            if (snapshot.data != '' && snapshot.data != null) {
+                              return Text(snapshot.data,
+                                  style: TextStyle(color: Colors.red));
+                            } else {
+                              return Text('');
+                            }
+                          }),
+                      SizedBox(height: getProportionateScreenWidth(10)),
+                      StreamBuilder<Object>(
+                          stream: authBloc.isMatchingandValid,
+                          builder: (context, snapshot) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: 65,
+                              width: double.infinity,
+                              child: StreamBuilder<bool>(
+                                  stream: authBloc.isMatchingandValid,
+                                  builder: (context, snapshot) {
+                                    return FlatButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      onPressed: () {
+                                        if (snapshot.data == true) {
+                                          authBloc
+                                              .registerWithEmailAndPassword();
+                                        }
+                                      },
+                                      color: (snapshot.data == true)
+                                          ? Color(0xFF00B2F5)
+                                          : Color(0xFF00B2F5).withOpacity(0.3),
+                                      child: Text(
+                                        'Sign Up',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      textColor: kPrimaryColor,
+                                    );
+                                  }),
+                            );
+                          }),
                       SizedBox(
                         height: 10,
                       ),
