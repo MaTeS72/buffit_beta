@@ -1,10 +1,16 @@
 class ApplicationUser {
   final String uid;
   final String email;
+  final String name;
+  final String lastName;
+  final String profession;
   final String photoURL;
   final String displayName;
 
   ApplicationUser({
+    this.name,
+    this.lastName,
+    this.profession,
     this.uid,
     this.email,
     this.photoURL,
@@ -16,6 +22,8 @@ class ApplicationUser {
       'uid': uid,
       'email': email,
       'photoURL': photoURL,
+      'name': name,
+      'lastName': lastName,
       'displayname': displayName,
     };
   }
@@ -23,6 +31,9 @@ class ApplicationUser {
   ApplicationUser.fromFirestore(Map<String, dynamic> firestore)
       : uid = firestore['uid'],
         email = firestore['email'],
+        name = firestore['name'],
+        lastName = firestore['lastName'],
+        profession = firestore['profession'],
         photoURL = firestore['photoURL'],
         displayName = firestore['displayName'];
 

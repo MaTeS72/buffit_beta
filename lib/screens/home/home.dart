@@ -61,18 +61,18 @@ class _HomeState extends State<Home> {
             child: StreamBuilder<User>(
                 stream: authBloc.currentUser,
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data == null)
-                    return CircularProgressIndicator();
-                  if (snapshot.data.photoURL == null) {
-                    return FlatButton(
-                        onPressed: () => authBloc.logout(),
-                        child: Text(snapshot.data.email.substring(0, 2)));
-                  } else {
-                    return CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          snapshot.data.photoURL + '?width=100&height100'),
-                      radius: 30.0,
-                    );
+                  if (snapshot.data != null) {
+                    if (snapshot.data.photoURL == null) {
+                      return FlatButton(
+                          onPressed: () => authBloc.logout(),
+                          child: Text(snapshot.data.email.substring(0, 2)));
+                    } else {
+                      return CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            snapshot.data.photoURL + '?width=100&height100'),
+                        radius: 30.0,
+                      );
+                    }
                   }
                 }),
           )

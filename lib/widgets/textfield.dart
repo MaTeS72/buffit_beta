@@ -9,6 +9,7 @@ class AppTextField extends StatefulWidget {
   final void Function(String) onChanged;
   final String errorText;
   final String initialText;
+  final TextEditingController controller;
 
   AppTextField({
     @required this.hintText,
@@ -18,6 +19,7 @@ class AppTextField extends StatefulWidget {
     this.onChanged,
     this.errorText,
     this.initialText,
+    this.controller,
   });
   @override
   _AppTextFieldState createState() => _AppTextFieldState();
@@ -29,6 +31,7 @@ class _AppTextFieldState extends State<AppTextField> {
     return TextField(
       keyboardType: widget.textInputType,
       style: TextFieldStyles.text,
+      controller: widget.controller,
       decoration: TextFieldStyles.materialDecoration(widget.hintText,
           widget.materialIcon, widget.errorText, widget.initialText),
       obscureText: widget.obscureText,

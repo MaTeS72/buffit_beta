@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:buffit_beta/models/application_user.dart';
 import 'package:buffit_beta/services/auth_service.dart';
 import 'package:buffit_beta/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,7 +12,11 @@ import 'package:rxdart/rxdart.dart';
 class AuthBloc {
   final _email = BehaviorSubject<String>();
   final _password = BehaviorSubject<String>();
+  final _name = BehaviorSubject<String>();
+  final _lastName = BehaviorSubject<String>();
+  final _profession = BehaviorSubject<String>();
   final _passwordAgain = BehaviorSubject<String>();
+
   final _errorMessage = BehaviorSubject<String>();
   final _infoStream = BehaviorSubject<String>();
   final authService = AuthService();
@@ -29,18 +31,22 @@ class AuthBloc {
 //Get
   Stream<String> get email => _email.stream.transform(validateEmail);
   Stream<String> get password => _password.stream.transform(validatePassword);
+  Stream<String> get name => _name.stream.transform(validateName);
+  Stream<String> get lastName => _lastName.stream.transform(validateLastName);
+  Stream<String> get profession =>
+      _profession.stream.transform(validateProfession);
   Stream<String> get passwordAgain =>
       _passwordAgain.stream.transform(validatePassword).doOnData((String c) {
-        // If the password is accepted (after validation of the rules)
-        // we need to ensure both password and retyped password match
         if (0 != _password.value.compareTo(c)) {
-          // If they do not match, add an error
-          _passwordAgain.sink.addError('Password doesn´t match');
+          _passwordAgain.sink.addError('Hesla se neshodují!');
         }
       });
 
   Stream<bool> get isMatchingandValid => CombineLatestStream.combine3(
       password, passwordAgain, email, (password, passwordAgain, email) => true);
+
+  Stream<bool> get register1IsValid => CombineLatestStream.combine3(
+      name, lastName, profession, (a, b, c) => true);
 
   Stream<String> get errorMessage => _errorMessage.stream;
   Stream<bool> get isValid =>
@@ -51,6 +57,9 @@ class AuthBloc {
 //Set
 
   Function(String) get changeEmail => _email.sink.add;
+  Function(String) get changeName => _name.sink.add;
+  Function(String) get changeLastName => _lastName.sink.add;
+  Function(String) get changeProfession => _profession.sink.add;
   Function(String) get changePassword => _password.sink.add;
   Function(String) get changePasswordAgain => _passwordAgain.sink.add;
 
@@ -63,7 +72,7 @@ class AuthBloc {
     if (regExpEmail.hasMatch(email.trim())) {
       sink.add(email.trim());
     } else {
-      sink.addError('Must be valid email adress');
+      sink.addError('Email musí být ve správném formátu');
     }
   });
 
@@ -72,7 +81,34 @@ class AuthBloc {
     if (password.length >= 8) {
       sink.add(password.trim());
     } else {
-      sink.addError('Must be at least 8 character long');
+      sink.addError('Musí být alespoň 8 znaků dlouhé');
+    }
+  });
+
+  final validateName =
+      StreamTransformer<String, String>.fromHandlers(handleData: (name, sink) {
+    if (name.length >= 3) {
+      sink.add(name.trim());
+    } else {
+      sink.addError('Musí být alespoň 3 znaky dlouhé');
+    }
+  });
+
+  final validateLastName = StreamTransformer<String, String>.fromHandlers(
+      handleData: (lastname, sink) {
+    if (lastname.length >= 3) {
+      sink.add(lastname.trim());
+    } else {
+      sink.addError('Musí být alespoň 3 znaky dlouhé');
+    }
+  });
+
+  final validateProfession = StreamTransformer<String, String>.fromHandlers(
+      handleData: (profession, sink) {
+    if (profession.length >= 3) {
+      sink.add(profession.trim());
+    } else {
+      sink.addError('Musí být alespoň 3 znaky dlouhé');
     }
   });
 
@@ -80,6 +116,9 @@ class AuthBloc {
   dispose() {
     _user.close();
     _email.close();
+    _name.close();
+    _lastName.close();
+    _profession.close();
     _password.close();
     _infoStream.close();
     _passwordAgain.close();
@@ -96,19 +135,19 @@ class AuthBloc {
       clearErrorMessage();
     } on PlatformException catch (error) {
       print(error.message);
-      _errorMessage.sink.add('Wrong email or password. Try again');
+      _errorMessage.sink.add('Špatný email nebo heslo. Zkuste to znovu.');
     } catch (error) {
       print(error.message);
-      _errorMessage.sink.add('Wrong email or password. Try again');
+      _errorMessage.sink.add('Špatný email nebo heslo. Zkuste to znovu.');
     }
   }
 
   Future<String> resetPassword() async {
     try {
       await _auth.sendPasswordResetEmail(email: _email.value.trim());
-      return 'Email sent!';
+      return 'Email Zaslán!';
     } catch (e) {
-      return 'Invalid email address';
+      return 'Špatná emailová adresa.';
     }
   }
 
@@ -118,6 +157,9 @@ class AuthBloc {
           _email.value.trim(), _password.value.trim());
       var user = ApplicationUser(
         uid: AuthResult.user.uid,
+        name: _name.value,
+        lastName: _lastName.value,
+        profession: _profession.value,
         email: AuthResult.user.email,
         photoURL: AuthResult.user.photoURL,
         displayName: AuthResult.user.displayName,
@@ -127,10 +169,10 @@ class AuthBloc {
       updateUserData(user);
     } on PlatformException catch (error) {
       print(error.message);
-      _errorMessage.sink.add('The email address is already in use.');
+      _errorMessage.sink.add('Tento email je už používán.');
     } catch (error) {
       print(error.message);
-      _errorMessage.sink.add('The email address is already in use.');
+      _errorMessage.sink.add('Tento email je už používán.');
     }
   }
 
@@ -163,7 +205,6 @@ class AuthBloc {
 
     switch (res.status) {
       case FacebookLoginStatus.Success:
-        print('It worked');
         //Get Token
         final FacebookAccessToken fbToken = res.accessToken;
 
@@ -174,7 +215,6 @@ class AuthBloc {
         //User Credential to Sign in with Firebase
         final result = await authService.signInWithCredentail(credential);
 
-        print('${result.user.displayName} is now logged in');
         var user = ApplicationUser(
           uid: result.user.uid,
           email: result.user.email,
@@ -205,6 +245,9 @@ class AuthBloc {
         'uid': user.uid,
         'email': user.email,
         'photoURL': user.photoURL,
+        'name': (user.name == '' && null) ? '' : user.name,
+        'lastname': (user.lastName == '' && null) ? '' : user.lastName,
+        'profession': (user.profession == '' && null) ? '' : user.profession,
         'displayName': user.displayName,
       },
     );
