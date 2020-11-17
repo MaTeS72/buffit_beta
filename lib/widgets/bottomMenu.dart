@@ -2,6 +2,7 @@ import 'package:buffit_beta/screens/fitness/fitness.dart';
 import 'package:buffit_beta/screens/posts/posts.dart';
 import 'package:buffit_beta/screens/programming/programming.dart';
 import 'package:buffit_beta/screens/videos/videos.dart';
+import 'package:buffit_beta/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -56,7 +57,7 @@ class BottomMenu extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Color(0xFFF7F0F0),
+              color: AppColors.lightgreycolor,
             ),
           )
         ],

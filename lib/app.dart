@@ -42,14 +42,27 @@ class PlatformApp extends StatelessWidget {
     var isLoggedIn = Provider.of<bool>(context);
 
     return MaterialApp(
+        builder: (context, child) {
+          return ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: child,
+          );
+        },
         home: (isLoggedIn == null)
             ? Login()
             : (isLoggedIn == true)
                 ? Home()
                 : Login(),
         debugShowCheckedModeBanner: false,
-        initialRoute: Login.routeName,
-        routes: routes,
+        onGenerateRoute: Routes.materialRoutes,
         theme: theme());
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

@@ -1,15 +1,10 @@
 import 'dart:async';
-
 import 'package:buffit_beta/blocs/bloc.dart';
-import 'package:buffit_beta/constants.dart';
 import 'package:buffit_beta/models/application_user.dart';
-
-import 'package:buffit_beta/screens/Login/login.dart';
 import 'package:buffit_beta/screens/home/components/body.dart';
-import 'package:buffit_beta/screens/videos/videos.dart';
+import 'package:buffit_beta/services/instagram_posts_service.dart';
 import 'package:buffit_beta/widgets/bottomMenu.dart';
 import 'package:buffit_beta/widgets/homeButton.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +13,6 @@ import 'package:provider/provider.dart';
 import '../../size_config.dart';
 
 class Home extends StatefulWidget {
-  static String routeName = "/home";
   @override
   _HomeState createState() => _HomeState();
 }
@@ -33,7 +27,7 @@ class _HomeState extends State<Home> {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
     homeStateSubscription = authBloc.user.listen((user) {
       if (user == null) {
-        Navigator.pushReplacementNamed(context, Login.routeName);
+        Navigator.pushReplacementNamed(context, '/login');
       }
     });
     super.initState();
@@ -74,6 +68,7 @@ class _HomeState extends State<Home> {
                       );
                     }
                   }
+                  return Container();
                 }),
           )
         ],

@@ -12,6 +12,28 @@ abstract class TextStyles {
             color: AppColors.white));
   }
 
+  static TextStyle get courseDetailTitle {
+    return GoogleFonts.sourceSansPro(
+        textStyle: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: getProportionateScreenWidth(40),
+            color: AppColors.white));
+  }
+
+  static TextStyle get courseTitle {
+    return GoogleFonts.sourceSansPro(
+        textStyle: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: getProportionateScreenWidth(25),
+            color: AppColors.white));
+  }
+
+  static TextStyle get courseSubtitle {
+    return GoogleFonts.sourceSansPro(
+        textStyle: TextStyle(
+            fontSize: getProportionateScreenWidth(15), color: AppColors.white));
+  }
+
   static TextStyle get clasicText {
     return GoogleFonts.sourceSansPro(
         textStyle: TextStyle(color: AppColors.white));

@@ -1,17 +1,12 @@
-import 'dart:async';
-
 import 'package:buffit_beta/blocs/bloc.dart';
-import 'package:buffit_beta/models/application_user.dart';
+import 'package:buffit_beta/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-
-import '../../constants.dart';
 import '../../constants.dart';
 import '../../size_config.dart';
 
 class ResetPassword extends StatefulWidget {
-  static String routeName = "/reset_password";
   @override
   _ResetPasswordState createState() => _ResetPasswordState();
 }
@@ -39,7 +34,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 Container(
                   height: getProportionateScreenHeight(250),
                   decoration: BoxDecoration(
-                      color: kSecondaryColorShade,
+                      color: AppColors.darkgreycolor,
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(70),
                           bottomRight: Radius.circular(70))),
@@ -139,7 +134,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                                           ),
                                         ],
                                       ),
-                                      backgroundColor: kSecondaryColorShade,
+                                      backgroundColor: AppColors.darkgreycolor,
                                       duration: Duration(seconds: 3),
                                     )));
                               },

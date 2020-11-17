@@ -1,4 +1,5 @@
 import 'package:buffit_beta/constants.dart';
+import 'package:buffit_beta/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -28,11 +29,11 @@ AppBarTheme appBarTheme() {
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(10),
-    borderSide: BorderSide(color: kSecondaryColorShade),
+    borderSide: BorderSide(color: AppColors.darkgreycolor),
     gapPadding: 10,
   );
   return InputDecorationTheme(
-    fillColor: kSecondaryColorShade,
+    fillColor: AppColors.darkgreycolor,
     filled: true,
     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     enabledBorder: outlineInputBorder,

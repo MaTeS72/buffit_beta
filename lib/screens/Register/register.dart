@@ -1,26 +1,17 @@
 import 'dart:async';
-
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/models/application_user.dart';
-import 'package:buffit_beta/screens/Login/login.dart';
-import 'package:buffit_beta/screens/home/home.dart';
-import 'package:buffit_beta/styles/colors.dart';
-import 'package:buffit_beta/validation/signup_validation.dart';
+import 'package:buffit_beta/widgets/header.dart';
 import 'package:buffit_beta/widgets/textfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
-import 'package:rxdart/rxdart.dart';
-
 import '../../constants.dart';
 import '../../size_config.dart';
 
 class Register extends StatefulWidget {
-  static String routeName = "/register";
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -40,6 +31,12 @@ class _RegisterState extends State<Register> {
 
   bool isSecond = false;
   var nameController = TextEditingController();
+  var lastNameController = TextEditingController();
+  var professionController = TextEditingController();
+
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+  var passwordAgainController = TextEditingController();
 
   @override
   void initState() {
@@ -47,7 +44,7 @@ class _RegisterState extends State<Register> {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
     loginStateSubscription = authBloc.user.listen((user) {
       if (user != null) {
-        Navigator.pushReplacementNamed(context, Home.routeName);
+        Navigator.pushReplacementNamed(context, '/home');
       }
     });
     super.initState();
@@ -133,6 +130,7 @@ class _RegisterState extends State<Register> {
                   builder: (context, snapshot) {
                     return AppTextField(
                       initialText: 'Příjmení',
+                      controller: lastNameController,
                       hintText: 'Zadejte své příjmení',
                       errorText: snapshot.error,
                       materialIcon: Icon(Icons.person_outline),
@@ -146,6 +144,7 @@ class _RegisterState extends State<Register> {
                     return AppTextField(
                       initialText: 'Profese',
                       hintText: 'Zadejte svou profesi',
+                      controller: professionController,
                       errorText: snapshot.error,
                       materialIcon: Icon(Icons.home_repair_service_outlined),
                       onChanged: authBloc.changeProfession,
@@ -215,8 +214,7 @@ class _RegisterState extends State<Register> {
                           fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => Login()));
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                   )
                 ],
@@ -233,6 +231,7 @@ class _RegisterState extends State<Register> {
                     return AppTextField(
                         initialText: 'Email',
                         hintText: 'Zadejte svůj email',
+                        controller: emailController,
                         materialIcon: Icon(Icons.email_outlined),
                         onChanged: authBloc.changeEmail,
                         errorText: snapshot.error);
@@ -245,6 +244,7 @@ class _RegisterState extends State<Register> {
                         initialText: 'Heslo',
                         hintText: 'Zadejte své jméno',
                         obscureText: true,
+                        controller: passwordController,
                         materialIcon: Icon(Icons.lock_outlined),
                         onChanged: authBloc.changePassword,
                         errorText: snapshot.error);
@@ -257,6 +257,7 @@ class _RegisterState extends State<Register> {
                       initialText: 'Heslo Znovu',
                       hintText: 'Zadejte své heslo znovu',
                       obscureText: true,
+                      controller: passwordAgainController,
                       materialIcon: Icon(Icons.lock_outlined),
                       onChanged: authBloc.changePasswordAgain,
                       errorText: snapshot.error,
@@ -329,8 +330,7 @@ class _RegisterState extends State<Register> {
                           fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => Login()));
+                      Navigator.pushReplacementNamed(context, '/login');
                     },
                   )
                 ],
@@ -351,72 +351,7 @@ class _RegisterState extends State<Register> {
                       width: getProportionateScreenWidth(110))),
               body: ListView(
                 children: [
-                  Stack(
-                    children: <Widget>[
-                      Container(
-                        height: getProportionateScreenHeight(200),
-                        decoration: BoxDecoration(
-                            color: kSecondaryColorShade,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(70),
-                                bottomRight: Radius.circular(70))),
-                      ),
-                      //  Container(child: SvgPicture.asset('assets\images\cap.svg')),
-                      Positioned(
-                        left: getProportionateScreenWidth(30),
-                        top: getProportionateScreenHeight(25),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Sign',
-                              style: GoogleFonts.sourceSansPro(
-                                textStyle: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: getProportionateScreenWidth(50),
-                                    color: kPrimaryColor),
-                              ),
-                            ),
-                            Container(
-                              height: 5,
-                              width: 50,
-                              color: Colors.red,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                SizedBox(
-                                  width: getProportionateScreenWidth(60),
-                                ),
-                                Text('Up',
-                                    style: GoogleFonts.sourceSansPro(
-                                      textStyle: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize:
-                                              getProportionateScreenWidth(50),
-                                          color: kPrimaryColor),
-                                    )),
-                                Text(
-                                  '.',
-                                  style: TextStyle(
-                                      fontSize: getProportionateScreenWidth(50),
-                                      color: Color(0xFF00B2F5)),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.only(
-                              top: getProportionateScreenWidth(10)),
-                          child: SvgPicture.asset(
-                            'assets/images/cap4.svg',
-                            height: 200,
-                            alignment: new Alignment(4, 0),
-                          )),
-                    ],
-                  ),
+                  Header(title: 'Sign Up'),
                   Padding(
                       padding: EdgeInsets.only(right: 100),
                       child: Container(
