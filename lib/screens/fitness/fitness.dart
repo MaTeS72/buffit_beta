@@ -1,5 +1,6 @@
 import 'package:buffit_beta/widgets/bottomMenu.dart';
-import 'package:buffit_beta/widgets/header.dart';
+import 'package:buffit_beta/widgets/custom_appbar.dart';
+
 import 'package:buffit_beta/widgets/homeButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,15 +16,13 @@ class _FitnessState extends State<Fitness> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: SvgPicture.asset('assets/images/buffit.svg',
-              width: getProportionateScreenWidth(110)),
-        ),
+        appBar: CustomAppBar(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: HomeButton(),
         bottomNavigationBar: BottomMenu(),
+        extendBody: true,
         body: Column(
-          children: [Header(title: 'Fitness Life')],
+          children: [],
         ));
   }
 }

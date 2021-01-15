@@ -12,6 +12,28 @@ abstract class TextStyles {
             color: AppColors.white));
   }
 
+  static TextStyle get sectionTitle {
+    return GoogleFonts.nunito(
+      textStyle: TextStyle(fontSize: 25, fontWeight: FontWeight.w300),
+    );
+  }
+
+  static TextStyle get appBarTitle {
+    return GoogleFonts.nunito(textStyle: TextStyle(color: Colors.white));
+  }
+
+  static TextStyle get screenTitle {
+    return GoogleFonts.nunito(
+        textStyle: TextStyle(
+            color: AppColors.white, fontSize: 28, fontWeight: FontWeight.w300));
+  }
+
+  static TextStyle get bigScreenTitle {
+    return GoogleFonts.nunito(
+        textStyle: TextStyle(
+            color: AppColors.white, fontSize: 35, fontWeight: FontWeight.w400));
+  }
+
   static TextStyle get courseDetailTitle {
     return GoogleFonts.sourceSansPro(
         textStyle: TextStyle(
@@ -24,7 +46,7 @@ abstract class TextStyles {
     return GoogleFonts.sourceSansPro(
         textStyle: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: getProportionateScreenWidth(25),
+            fontSize: getProportionateScreenWidth(20),
             color: AppColors.white));
   }
 

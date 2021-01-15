@@ -5,14 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData theme() {
   return ThemeData(
-    //   scaffoldBackgroundColor: Colors.white,
-    //fontFamily: "Muli",
-    //appBarTheme: appBarTheme(),
-    // textTheme: textTheme(),
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     brightness: Brightness.dark,
     appBarTheme: appBarTheme(),
+    scaffoldBackgroundColor: const Color(0XFF171920),
   );
 }
 
@@ -29,11 +26,10 @@ AppBarTheme appBarTheme() {
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(10),
-    borderSide: BorderSide(color: AppColors.darkgreycolor),
     gapPadding: 10,
   );
   return InputDecorationTheme(
-    fillColor: AppColors.darkgreycolor,
+    fillColor: Color(0xFF232630),
     filled: true,
     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     enabledBorder: outlineInputBorder,

@@ -136,9 +136,6 @@ class AuthBloc {
     } on PlatformException catch (error) {
       print(error.message);
       _errorMessage.sink.add('Špatný email nebo heslo. Zkuste to znovu.');
-    } catch (error) {
-      print(error.message);
-      _errorMessage.sink.add('Špatný email nebo heslo. Zkuste to znovu.');
     }
   }
 

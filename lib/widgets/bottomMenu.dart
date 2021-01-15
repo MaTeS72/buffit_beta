@@ -12,6 +12,7 @@ class BottomMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
+      color: Color(0xFF282C38),
       shape: CircularNotchedRectangle(),
       child: Row(
         children: [

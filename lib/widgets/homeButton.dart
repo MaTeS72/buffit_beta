@@ -17,7 +17,7 @@ class HomeButton extends StatelessWidget {
         color: Colors.white,
         size: 35,
       ),
-      backgroundColor: Color(0xFF0987B6),
+      backgroundColor: Color(0xFF3891FC),
       elevation: 2.0,
     );
   }

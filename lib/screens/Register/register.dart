@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:buffit_beta/blocs/bloc.dart';
 import 'package:buffit_beta/models/application_user.dart';
-import 'package:buffit_beta/widgets/header.dart';
+import 'package:buffit_beta/screens/register/register_animation_screen.dart';
+import 'package:buffit_beta/styles/colors.dart';
+import 'package:buffit_beta/styles/text.dart';
+import 'package:buffit_beta/widgets/custom_appbar.dart';
 import 'package:buffit_beta/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,117 +112,119 @@ class _RegisterState extends State<Register> {
     _forms = [
       WillPopScope(
           onWillPop: () => Future.sync(onWillPop),
-          child: ListView(
-            children: [
-              SizedBox(height: 2),
-              StreamBuilder<String>(
-                  stream: authBloc.name,
-                  builder: (context, snapshot) {
-                    return AppTextField(
-                      initialText: 'Jméno',
-                      hintText: 'Zadejte své jméno',
-                      controller: nameController,
-                      errorText: snapshot.error,
-                      materialIcon: Icon(Icons.person_outline),
-                      onChanged: authBloc.changeName,
-                    );
-                  }),
-              SizedBox(height: 20),
-              StreamBuilder<String>(
-                  stream: authBloc.lastName,
-                  builder: (context, snapshot) {
-                    return AppTextField(
-                      initialText: 'Příjmení',
-                      controller: lastNameController,
-                      hintText: 'Zadejte své příjmení',
-                      errorText: snapshot.error,
-                      materialIcon: Icon(Icons.person_outline),
-                      onChanged: authBloc.changeLastName,
-                    );
-                  }),
-              SizedBox(height: 20),
-              StreamBuilder<Object>(
-                  stream: authBloc.profession,
-                  builder: (context, snapshot) {
-                    return AppTextField(
-                      initialText: 'Profese',
-                      hintText: 'Zadejte svou profesi',
-                      controller: professionController,
-                      errorText: snapshot.error,
-                      materialIcon: Icon(Icons.home_repair_service_outlined),
-                      onChanged: authBloc.changeProfession,
-                    );
-                  }),
-              SizedBox(height: getProportionateScreenWidth(5)),
-              StreamBuilder<String>(
-                  stream: authBloc.errorMessage,
-                  builder: (context, snapshot) {
-                    if (snapshot.data != '' && snapshot.data != null) {
-                      return Text(snapshot.data,
-                          style: TextStyle(color: Colors.red));
-                    } else {
-                      return Text('');
-                    }
-                  }),
-              StreamBuilder<Object>(
-                  stream: authBloc.isMatchingandValid,
-                  builder: (context, snapshot) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20)),
-                      height: 65,
-                      width: double.infinity,
-                      child: StreamBuilder<bool>(
-                          stream: authBloc.register1IsValid,
-                          builder: (context, snapshot) {
-                            return FlatButton(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              onPressed: () {
-                                if (snapshot.data == true) {
-                                  _wipersChange(true);
-                                  _nextFormStep();
-                                }
-                              },
-                              color: (snapshot.data == true)
-                                  ? Color(0xFF00B2F5)
-                                  : Color(0xFF00B2F5).withOpacity(0.3),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Další',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Icon(Icons.arrow_right)
-                                ],
-                              ),
-                              textColor: kPrimaryColor,
-                            );
-                          }),
-                    );
-                  }),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Už máte účet? '),
-                  GestureDetector(
-                    child: Text(
-                      'Přihlásit se',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  )
-                ],
-              )
-            ],
+          child: Container(
+            child: ListView(
+              children: [
+                SizedBox(height: 2),
+                StreamBuilder<String>(
+                    stream: authBloc.name,
+                    builder: (context, snapshot) {
+                      return AppTextField(
+                        initialText: 'Jméno',
+                        hintText: 'Zadejte své jméno',
+                        controller: nameController,
+                        errorText: snapshot.error,
+                        materialIcon: Icon(Icons.person_outline),
+                        onChanged: authBloc.changeName,
+                      );
+                    }),
+                SizedBox(height: 20),
+                StreamBuilder<String>(
+                    stream: authBloc.lastName,
+                    builder: (context, snapshot) {
+                      return AppTextField(
+                        initialText: 'Příjmení',
+                        controller: lastNameController,
+                        hintText: 'Zadejte své příjmení',
+                        errorText: snapshot.error,
+                        materialIcon: Icon(Icons.person_outline),
+                        onChanged: authBloc.changeLastName,
+                      );
+                    }),
+                SizedBox(height: 20),
+                StreamBuilder<Object>(
+                    stream: authBloc.profession,
+                    builder: (context, snapshot) {
+                      return AppTextField(
+                        initialText: 'Profese',
+                        hintText: 'Zadejte svou profesi',
+                        controller: professionController,
+                        errorText: snapshot.error,
+                        materialIcon: Icon(Icons.home_repair_service_outlined),
+                        onChanged: authBloc.changeProfession,
+                      );
+                    }),
+                SizedBox(height: getProportionateScreenWidth(5)),
+                StreamBuilder<String>(
+                    stream: authBloc.errorMessage,
+                    builder: (context, snapshot) {
+                      if (snapshot.data != '' && snapshot.data != null) {
+                        return Text(snapshot.data,
+                            style: TextStyle(color: Colors.red));
+                      } else {
+                        return Text('');
+                      }
+                    }),
+                StreamBuilder<Object>(
+                    stream: authBloc.isMatchingandValid,
+                    builder: (context, snapshot) {
+                      return Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20)),
+                        height: 65,
+                        width: double.infinity,
+                        child: StreamBuilder<bool>(
+                            stream: authBloc.register1IsValid,
+                            builder: (context, snapshot) {
+                              return FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                onPressed: () {
+                                  if (snapshot.data == true) {
+                                    _wipersChange(true);
+                                    _nextFormStep();
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                color: Color(0xFF00B2F5),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Další',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    Icon(Icons.arrow_right)
+                                  ],
+                                ),
+                                textColor: kPrimaryColor,
+                              );
+                            }),
+                      );
+                    }),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Už máte účet? '),
+                    GestureDetector(
+                      child: Text(
+                        'Přihlásit se',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           )),
       WillPopScope(
           onWillPop: () => Future.sync(onWillPop),
@@ -346,44 +351,63 @@ class _RegisterState extends State<Register> {
               child: CircularProgressIndicator(),
             )
           : Scaffold(
-              appBar: AppBar(
-                  title: SvgPicture.asset('assets/images/buffit.svg',
-                      width: getProportionateScreenWidth(110))),
-              body: ListView(
-                children: [
-                  Header(title: 'Sign Up'),
-                  Padding(
-                      padding: EdgeInsets.only(right: 100),
-                      child: Container(
-                        height: 50,
-                        width: 100,
-                        child: Rive(
-                          artboard: _artboard,
-                          fit: BoxFit.fitHeight,
-                        ),
-                      )),
-                  SizedBox(
-                    height: getProportionateScreenWidth(15),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: getProportionateScreenWidth(30)),
-                    child: Container(
-                      height: 350,
-                      child: PageView.builder(
-                        controller: _formsPageViewController,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (BuildContext context, int index) {
-                          return _forms[index];
-                        },
+              appBar: CustomAppBar(),
+              body: isLoading
+                  ? RegisterAnimationScreen()
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: getProportionateScreenWidth(25),
+                          ),
+                          SvgPicture.asset(
+                            'assets/images/user.svg',
+                            height: 75,
+                            color: AppColors.white,
+                          ),
+                          Text(
+                            'Registrace',
+                            style: TextStyles.bigScreenTitle,
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenWidth(15),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                height: 50,
+                                width: 150,
+                                child: Rive(
+                                  artboard: _artboard,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                              SizedBox(
+                                width: getProportionateScreenWidth(20),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: getProportionateScreenWidth(15),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: getProportionateScreenWidth(30)),
+                            child: Container(
+                              height: 450,
+                              child: PageView.builder(
+                                controller: _formsPageViewController,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return _forms[index];
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: getProportionateScreenWidth(25),
-                  ),
-                ],
-              ),
             ),
     );
   }

@@ -9,8 +9,8 @@ import 'package:buffit_beta/size_config.dart';
 import 'package:buffit_beta/styles/colors.dart';
 import 'package:buffit_beta/styles/text.dart';
 import 'package:buffit_beta/validation/signup_validation.dart';
+import 'package:buffit_beta/widgets/custom_appbar.dart';
 import 'package:buffit_beta/widgets/fullwidthbutton.dart';
-import 'package:buffit_beta/widgets/header.dart';
 import 'package:buffit_beta/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -60,15 +60,10 @@ class _LoginState extends State<Login> {
               child: CircularProgressIndicator(),
             )
           : Scaffold(
-              appBar: AppBar(
-                  title: SvgPicture.asset('assets/images/buffit.svg',
-                      width: getProportionateScreenWidth(110))),
+              appBar: CustomAppBar(),
               body: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Header(
-                      title: 'Sign In',
-                    ),
                     StreamBuilder<String>(
                         stream: authBloc.errorMessage,
                         builder: (context, snapshot) {
@@ -78,6 +73,15 @@ class _LoginState extends State<Login> {
                           }
                           return Text('');
                         }),
+                    SizedBox(
+                      height: getProportionateScreenWidth(50),
+                    ),
+                    SvgPicture.asset(
+                      'assets/images/user.svg',
+                      height: 75,
+                      color: AppColors.white,
+                    ),
+                    Text('Login', style: TextStyles.bigScreenTitle),
                     SizedBox(
                       height: getProportionateScreenWidth(30),
                     ),
@@ -102,7 +106,7 @@ class _LoginState extends State<Login> {
                                     ),
                                   );
                                 }),
-                            SizedBox(height: getProportionateScreenWidth(20)),
+                            SizedBox(height: getProportionateScreenWidth(25)),
                             StreamBuilder<String>(
                                 stream: authBloc.password,
                                 builder: (context, snapshot) {
@@ -136,7 +140,7 @@ class _LoginState extends State<Login> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: getProportionateScreenWidth(30)),
+                            SizedBox(height: getProportionateScreenWidth(40)),
                             StreamBuilder<bool>(
                                 stream: authBloc.isValid,
                                 builder: (context, snapshot) {
@@ -239,31 +243,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-// TextFormField buildEmailFormField(validationService) {
-//   return TextFormField(
-//     onChanged: (value) {
-//       validationService.changeEmail(value);
-//     },
-//     decoration: InputDecoration(
-//       labelText: 'Email',
-//       hintText: 'Enter your email',
-//       errorText: validationService.email.error,
-//       floatingLabelBehavior: FloatingLabelBehavior.auto,
-//     ),
-//   );
-// }
-
-//   TextFormField buildPassFormField(validationService) {
-//     return TextFormField(
-//       onChanged: (value) {
-//         validationService.changePassword(value);
-//       },
-//       decoration: InputDecoration(
-//         labelText: 'Password',
-//         errorText: validationService.password.error,
-//         hintText: 'Enter your password',
-//         floatingLabelBehavior: FloatingLabelBehavior.auto,
-//       ),
-//     );
-//   }
-// }

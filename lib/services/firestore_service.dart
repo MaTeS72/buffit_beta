@@ -1,3 +1,4 @@
+import 'package:buffit_beta/models/album.dart';
 import 'package:buffit_beta/models/application_user.dart';
 import 'package:buffit_beta/models/category.dart';
 import 'package:buffit_beta/models/course.dart';
@@ -37,11 +38,41 @@ class FirestoreService {
         .then((snapshot) => Course.fromFirestore(snapshot.data()));
   }
 
+  Future<Album> fetchPost(postId) {
+    return _db
+        .collection('IG_Posts')
+        .doc(postId)
+        .get()
+        .then((snapshot) => Album.fromFirestore(snapshot.data()));
+  }
+
   Future<ApplicationUser> fetchUser(String userId) {
     return _db
         .collection('users')
         .doc(userId)
         .get()
         .then((snapshot) => ApplicationUser.fromFirestore(snapshot.data()));
+  }
+
+  Stream<List<Album>> fetchPosts() {
+    return _db
+        .collection('IG_Posts')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((val) => val.docs)
+        .map((snapshot) =>
+            snapshot.map((doc) => Album.fromFirestore(doc.data())).toList());
+  }
+
+  Stream<List<Album>> fetchNewPosts() {
+    return _db
+        .collection('IG_Posts')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((val) => val.docs)
+        .map((snapshot) => snapshot
+            .map((doc) => Album.fromFirestore(doc.data()))
+            .take(4)
+            .toList());
   }
 }

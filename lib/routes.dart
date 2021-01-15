@@ -3,6 +3,7 @@ import 'package:buffit_beta/screens/Register/register.dart';
 import 'package:buffit_beta/screens/course/course.dart';
 import 'package:buffit_beta/screens/fitness/fitness.dart';
 import 'package:buffit_beta/screens/home/home.dart';
+import 'package:buffit_beta/screens/post_detail/post_detail.dart';
 import 'package:buffit_beta/screens/posts/posts.dart';
 import 'package:buffit_beta/screens/programming/programming.dart';
 import 'package:buffit_beta/screens/reset_password/reset_password.dart';
@@ -35,6 +36,12 @@ abstract class Routes {
           return MaterialPageRoute(
               builder: (context) => CourseDetail(
                     courseId: routeArray[2],
+                  ));
+        }
+        if (settings.name.contains('/post/')) {
+          return MaterialPageRoute(
+              builder: (context) => PostDetail(
+                    postId: routeArray[2],
                   ));
         }
 

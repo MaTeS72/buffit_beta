@@ -1,4 +1,3 @@
-import 'package:buffit_beta/constants.dart';
 import 'package:buffit_beta/styles/colors.dart';
 import 'package:buffit_beta/styles/text.dart';
 import 'package:flutter/material.dart';
@@ -17,21 +16,20 @@ abstract class TextFieldStyles {
       errorText: errorText,
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColors.darkgreycolor),
+        borderSide: BorderSide(color: AppColors.secondaryBlue),
         gapPadding: 10,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColors.darkgreycolor),
+        borderSide: BorderSide(color: AppColors.secondaryBlue),
         gapPadding: 10,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColors.darkgreycolor),
+        borderSide: BorderSide(color: AppColors.secondaryBlue),
         gapPadding: 10,
       ),
       suffixIcon: icon,
-      fillColor: AppColors.darkgreycolor,
       filled: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     );
